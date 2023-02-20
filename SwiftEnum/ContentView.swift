@@ -43,16 +43,14 @@ func  winCase(myArray: [BoardSquare]) -> Bool {
   let winCases: Set<[Positions]> = [[.upLeft, .upCenter, .upRight], [.midleLeft, .midleCenter, .midleRight], [.botLeft, .botCenter, .botRight], [.upLeft, .midleLeft, .botLeft], [.upCenter, .midleCenter, .botCenter], [.upRight, .midleRight, .botRight], [.upLeft, .midleCenter, .botRight], [.upRight, .midleCenter, .botLeft]]
   for setCase in winCases {
     for caseIn in setCase {
-      myNewArray.removeAll(where: {$0.position != caseIn})
-      if myNewArray.count >= 1 {
+      if myNewArray.contains(where: {$0.position == caseIn}) {
         counter += 1
-        if myNewArray.count == 3 {
-          print(myNewArray.count, myNewArray)
+        if counter == 3 {
           return true
         }
       }
-      break
     }
+    counter = 0
     myNewArray = myArray
   }
   return false
@@ -68,34 +66,46 @@ struct ContentView: View {
       GridRow {
         ForEach(0..<3) { num in
           Button(myBoard.myBoard[num].square.rawValue) {
-            changeSign(to: num)
+            if changeSign(to: num) {
+              showingAlert.toggle()
+            }
           }
         }
       }
       GridRow {
         ForEach(3..<6) { num in
           Button(myBoard.myBoard[num].square.rawValue) {
-            changeSign(to: num)
+            if changeSign(to: num) {
+              showingAlert.toggle()
+            }
           }
         }
       }
       GridRow {
         ForEach(6..<9) { num in
           Button(myBoard.myBoard[num].square.rawValue) {
-            changeSign(to: num)
+            if changeSign(to: num) {
+              showingAlert.toggle()
+            }
           }
         }
       }
     }
     .alert("\(myBoard.playerTurn.rawValue), won!!", isPresented: $showingAlert) {
-                Button("OK") { }
-            }
+      Button("OK") {
+        clear()
+      }
+    }
     .padding()
     
     Button("Clear") {
-      myBoard.myBoard = board()
-      myBoard.playerTurn = .playerOne
+      clear()
     }
+  }
+  
+  func clear() {
+    myBoard.myBoard = board()
+    myBoard.playerTurn = .playerOne
   }
   
   func winCheck() -> Bool {
@@ -110,19 +120,26 @@ struct ContentView: View {
     
   }
   
-  func changeSign(to: Int) {
+  func changeSign(to: Int) -> Bool {
     
     if myBoard.myBoard[to].square == .empty {
       if myBoard.playerTurn == .playerOne {
         myBoard.myBoard[to].square = .x
-        winCheck()
+        if winCheck() {
+          return true
+        }
         myBoard.playerTurn = .playerTwo
+        return false
       } else {
         myBoard.myBoard[to].square = .circle
-        winCheck()
+        if winCheck() {
+          return true
+        }
         myBoard.playerTurn = .playerOne
+        return false
       }
     }
+    return false
   }
 }
 
