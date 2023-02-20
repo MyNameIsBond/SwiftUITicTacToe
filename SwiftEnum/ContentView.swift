@@ -40,19 +40,20 @@ class Board: ObservableObject {
 func  winCase(myArray: [BoardSquare]) -> Bool {
   var counter: Int = 0
   var myNewArray = myArray
-  var winCases: Set<[Positions]> = [[.upLeft, .upCenter, .upRight], [.midleLeft, .midleCenter, .midleRight], [.botLeft, .botCenter, .botRight], [.upLeft, .midleLeft, .botLeft], [.upCenter, .midleCenter, .botCenter], [.upRight, .midleRight, .botRight], [.upLeft, .midleCenter, .botRight], [.upRight, .midleCenter, .botLeft]]
+  let winCases: Set<[Positions]> = [[.upLeft, .upCenter, .upRight], [.midleLeft, .midleCenter, .midleRight], [.botLeft, .botCenter, .botRight], [.upLeft, .midleLeft, .botLeft], [.upCenter, .midleCenter, .botCenter], [.upRight, .midleRight, .botRight], [.upLeft, .midleCenter, .botRight], [.upRight, .midleCenter, .botLeft]]
   for setCase in winCases {
     for caseIn in setCase {
-      myNewArray.removeAll(where: {$0.position == caseIn})
+      myNewArray.removeAll(where: {$0.position != caseIn})
       if myNewArray.count >= 1 {
         counter += 1
         if myNewArray.count == 3 {
-          print(myNewArray.count)
+          print(myNewArray.count, myNewArray)
           return true
         }
-        break
       }
+      break
     }
+    myNewArray = myArray
   }
   return false
 }
@@ -102,7 +103,6 @@ struct ContentView: View {
     let pl =  myBoard.playerTurn
     myPor.removeAll(where: { $0.square == .empty || $0.square == ( pl == .playerOne ? .circle : .x ) })
     if winCase(myArray: myPor) {
-      print("WIN!!")
       return true
     } else {
       return false
