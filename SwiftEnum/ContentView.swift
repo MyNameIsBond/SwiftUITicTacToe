@@ -93,6 +93,11 @@ struct ContentView: View {
     }
     .alert("\(myBoard.playerTurn.rawValue), won!!", isPresented: $showingAlert) {
       Button("OK") {
+        if myBoard.playerTurn == .playerOne {
+          myBoard.playerOneWins = myBoard.playerOneWins + 1
+        } else {
+          myBoard.playerTwoWins = myBoard.playerTwoWins + 1
+        }
         clear()
       }
     }
